@@ -6,6 +6,7 @@ import AddComponent from '../components/AddComponent';
 import AddForm from '../components/AddForm'; // Import the AddForm component
 import DeleteComponent from '../components/DeleteComponent';
 import SearchComponent from '../components/SearchComponent';
+import BooksList from '../components/BooksList';
 
 const Dashboard = () => {
   const [selectedAction, setSelectedAction] = useState(null);
@@ -62,6 +63,7 @@ const Dashboard = () => {
         {selectedAction === 'add' && <AddComponent onAddForm={handleAddForm} />}
         {selectedAction === 'delete' && <DeleteComponent />}
         {selectedAction === 'search' && <SearchComponent />}
+        {!selectedAction && <BooksList />} 
       </View>
 
       {/* Modal for Add form */}
