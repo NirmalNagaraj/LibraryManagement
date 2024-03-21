@@ -60,7 +60,7 @@ app.post('/bookdetails', (req, res) => {
     // Construct SQL query for inserting book details
     const query = 'INSERT INTO Books (BookName, BookAuthor, PublishedDate, BookDescription) VALUES (?, ?, ?, ?)';
 
-    // Execute the query
+    // Execute the qury
     connection.query(query, [bookName, bookAuthor, date, bookDescription], (error, results) => {
         if (error) {
             console.error('Error inserting book details:', error);
