@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Picker, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Picker, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
 
 const SearchComponent = () => {
@@ -17,6 +17,24 @@ const SearchComponent = () => {
     } catch (error) {
       console.error('Error searching:', error);
     }
+  };
+
+  const formatPublishedDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(); // Format the date according to local settings
+  };
+
+  const renderCard = (item) => {
+    return (
+      <View style={styles.card}>
+        {Object.entries(item).map(([key, value]) => (
+          <View key={key} style={styles.cardRow}>
+            <Text style={styles.cardKey}>{key}</Text>
+            <Text style={styles.cardValue}>{key === 'PublishedDate' ? formatPublishedDate(value) : value}</Text>
+          </View>
+        ))}
+      </View>
+    );
   };
 
   return (
@@ -41,13 +59,11 @@ const SearchComponent = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.resultText}>You are searching for "{searchText}" in {selectedFilter}</Text>
-      {searchResults.map((result) => (
-        <View key={result.id} style={styles.profileCard}>
-          <Text>Name: {result.name}</Text>
-          <Text>Email: {result.email}</Text>
-          {/* Add additional fields based on the table structure */}
-        </View>
-      ))}
+      <FlatList
+        data={searchResults}
+        renderItem={({ item }) => renderCard(item)}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </View>
   );
 };
@@ -87,12 +103,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
   },
-  profileCard: {
+  card: {
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  cardKey: {
+    fontWeight: 'bold',
+    marginRight: 5,
+  },
+  cardValue: {
+    flex: 1,
   },
 });
 
