@@ -1,43 +1,42 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import axios from 'axios'; // Import Axios
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Picker } from 'react-native';
+import axios from 'axios';
 
 const AddForm = ({ onSubmit }) => {
   const [bookName, setBookName] = useState('');
   const [bookAuthor, setBookAuthor] = useState('');
   const [date, setDate] = useState(new Date());
   const [bookDescription, setBookDescription] = useState('');
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState(''); // State for the selected department
 
   const handleSubmit = async () => {
-  try {
-    // Format date to SQL compatible format (YYYY-MM-DD)
-    const formattedDate = date.toISOString().split('T')[0];
-    
-    // Send POST request to the API with form data
-    const response = await axios.post('http://localhost:5000/bookdetails', {
-      bookName,
-      bookAuthor,
-      date: formattedDate, // Use formatted date
-      bookDescription
-    });
-    
-    // Handle response if needed
-    console.log('Response:', response.data);
-    
-    // Clear form fields after successful submission
-    setBookName('');
-    setBookAuthor('');
-    setDate(new Date());
-    setBookDescription('');
+    try {
+      
+      const formattedDate = date.toISOString().split('T')[0];
 
-    onSubmit();
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    // Handle error if needed
-  }
-};
+      
+      const response = await axios.post('http://localhost:5000/bookdetails', {
+        bookName,
+        bookAuthor,
+        date: formattedDate, 
+        bookDescription,
+        department: selectedDepartment, 
+      });
 
+      console.log('Response:', response.data);
+
+      setBookName('');
+      setBookAuthor('');
+      setDate(new Date());
+      setBookDescription('');
+      setSelectedDepartment('');
+
+      onSubmit();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -54,6 +53,20 @@ const AddForm = ({ onSubmit }) => {
         value={bookAuthor}
         onChangeText={text => setBookAuthor(text)}
       />
+      <Picker
+        selectedValue={selectedDepartment}
+        onValueChange={(itemValue, itemIndex) => setSelectedDepartment(itemValue)}
+        style={styles.input}
+      >
+        <Picker.Item label="Select Department" value="" />
+        <Picker.Item label="CSE" value="CSE" />
+        <Picker.Item label="IT" value="IT" />
+        <Picker.Item label="AIDS" value="AIDS" />
+        <Picker.Item label="CSBS" value="CSBS" />
+        <Picker.Item label="MECH" value="MECH" />
+        <Picker.Item label="S&H" value="S&H" />
+        <Picker.Item label="GENERAL" value="GENERAL" />
+      </Picker>
       {Platform.OS === 'ios' && showDatePicker && (
         <DatePickerIOS
           date={date}
