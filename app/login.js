@@ -1,25 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Picker } from 'react-native';
 import axios from 'axios';
-import Dashboard from './dashboard';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () => {
   const [registerNumber, setRegisterNumber] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation(); // Initialize useNavigation hook
+  const [userType, setUserType] = useState('student');
+  const navigation = useNavigation();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/userdetails', {
+      let apiUrl = '';
+      if (userType === 'student') {
+        apiUrl = 'http://localhost:5000/api/studentLogin'; // API endpoint for student login
+      } else if (userType === 'admin') {
+        apiUrl = 'http://localhost:5000/api/adminLogin'; // API endpoint for admin login
+      }
+
+      const response = await axios.post(apiUrl, {
         registerNumber: registerNumber,
         password: password
       });
 
       if (response.data.success) {
         console.log('Login successful');
-        // Redirect to the dashboard page upon successful login
-        navigation.navigate('Dashboard');
+        if (userType === 'student') {
+          navigation.navigate('StudentDashboard'); // Navigate to StudentDashboard if userType is student
+        } else if (userType === 'admin') {
+          navigation.navigate('Dashboard'); // Navigate to AdminDashboard if userType is admin
+        }
       } else {
         console.log('Login failed:', response.data.message);
       }
@@ -44,6 +54,13 @@ const Login = () => {
         value={password}
         onChangeText={text => setPassword(text)}
       />
+      <Picker
+        selectedValue={userType}
+        style={styles.picker}
+        onValueChange={(itemValue, itemIndex) => setUserType(itemValue)}>
+        <Picker.Item label="Student" value="student" />
+        <Picker.Item label="Admin" value="admin" />
+      </Picker>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
@@ -84,6 +101,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  picker: {
+    width: '80%',
+    height: 50,
+    marginBottom: 15,
   },
 });
 
