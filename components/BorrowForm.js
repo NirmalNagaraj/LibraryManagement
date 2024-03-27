@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Picker } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import DatePicker from 'react-native-datepicker'; // Import DatePicker from react-native-datepicker
 import axios from 'axios';
 
 const BorrowForm = ({ onSubmit }) => {
@@ -39,17 +40,49 @@ const BorrowForm = ({ onSubmit }) => {
         value={registerNumber}
         onChangeText={text => setRegisterNumber(text)}
       />
-      <TextInput
+      <DatePicker
         style={styles.input}
+        date={fromDate}
+        mode="date"
         placeholder="From Date"
-        value={fromDate}
-        onChangeText={text => setFromDate(text)}
+        format="YYYY-MM-DD"
+        minDate="1900-01-01"
+        confirmBtnText="Confirm"
+        cancelBtnText="Cancel"
+        customStyles={{
+          dateIcon: {
+            position: 'absolute',
+            left: 0,
+            top: 4,
+            marginLeft: 0,
+          },
+          dateInput: {
+            marginLeft: 36,
+          },
+        }}
+        onDateChange={date => setFromDate(date)}
       />
-      <TextInput
+      <DatePicker
         style={styles.input}
+        date={toDate}
+        mode="date"
         placeholder="To Date"
-        value={toDate}
-        onChangeText={text => setToDate(text)}
+        format="YYYY-MM-DD"
+        minDate="1900-01-01"
+        confirmBtnText="Confirm"
+        cancelBtnText="Cancel"
+        customStyles={{
+          dateIcon: {
+            position: 'absolute',
+            left: 0,
+            top: 4,
+            marginLeft: 0,
+          },
+          dateInput: {
+            marginLeft: 36,
+          },
+        }}
+        onDateChange={date => setToDate(date)}
       />
       <TextInput
         style={styles.input}
@@ -69,6 +102,9 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
   },
   title: {
     fontSize: 24,

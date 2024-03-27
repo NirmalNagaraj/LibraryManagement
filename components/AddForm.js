@@ -7,7 +7,9 @@ const AddForm = ({ onSubmit }) => {
   const [bookAuthor, setBookAuthor] = useState('');
   const [date, setDate] = useState(new Date());
   const [bookDescription, setBookDescription] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState(''); // State for the selected department
+  const [selectedDepartment, setSelectedDepartment] = useState(''); 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
 
   const handleSubmit = async () => {
     try {
