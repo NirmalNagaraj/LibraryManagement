@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import axios from 'axios';
 import DatePicker from 'react-native-modern-datepicker';
 
 const BorrowForm = ({ onSubmit }) => {
-  const [registerNumber, setRegisterNumber] = useState('');
-  const [fromDate, setFromDate] = useState(null); // Updated state to handle date
-  const [toDate, setToDate] = useState('');
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const [bookName, setBookName] = useState('');
+  const [showFromDatePicker, setShowFromDatePicker] = useState(false);
+  const [showToDatePicker, setShowToDatePicker] = useState(false);
 
   const handleSubmit = async () => {
     try {
       const response = await axios.post('http://localhost:5000/api/borrowbooks', {
-        registerNumber,
         fromDate,
         toDate,
         bookName,
@@ -20,9 +20,8 @@ const BorrowForm = ({ onSubmit }) => {
 
       console.log('Response:', response.data);
 
-      setRegisterNumber('');
-      setFromDate(null); // Reset date after submission
-      setToDate('');
+      setFromDate(null);
+      setToDate(null);
       setBookName('');
 
       onSubmit();
@@ -31,32 +30,58 @@ const BorrowForm = ({ onSubmit }) => {
     }
   };
 
+  const parseDateString = (dateString) => {
+    const date = new Date(dateString);
+    return date.toDateString();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Borrow Book</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Register Number"
-        value={registerNumber}
-        onChangeText={text => setRegisterNumber(text)}
-      />
-      {/* Date picker for selecting from date */}
-      <DatePicker
-        style={styles.input}
-        mode="calendar"
-        onSelectedChange={date => setFromDate(date)}
-        minimumDate={new Date()} // Prevent selecting past dates
-        placeholder="Select From Date"
-      />
+     
+      {/* From Date Field */}
+      <TouchableOpacity style={styles.input} onPress={() => setShowFromDatePicker(true)}>
+        <Text>{fromDate ? parseDateString(fromDate) : 'Select From Date'}</Text>
+      </TouchableOpacity>
+      {/* To Date Field */}
+      <TouchableOpacity style={styles.input} onPress={() => setShowToDatePicker(true)}>
+        <Text>{toDate ? parseDateString(toDate) : 'Select To Date'}</Text>
+      </TouchableOpacity>
+      {/* Book Name Field */}
       <TextInput
         style={styles.input}
         placeholder="Book Name"
         value={bookName}
         onChangeText={text => setBookName(text)}
       />
+      {/* Borrow Button */}
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Borrow</Text>
       </TouchableOpacity>
+      {/* From Date Picker Modal */}
+      <Modal visible={showFromDatePicker} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <DatePicker
+            mode="calendar"
+            onSelectedChange={date => {
+              setFromDate(date);
+              setShowFromDatePicker(false);
+            }}
+          />
+        </View>
+      </Modal>
+      {/* To Date Picker Modal */}
+      <Modal visible={showToDatePicker} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <DatePicker
+            mode="calendar"
+            onSelectedChange={date => {
+              setToDate(date);
+              setShowToDatePicker(false);
+            }}
+          />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -97,6 +122,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 
