@@ -1,16 +1,16 @@
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
-const cors = require('cors'); 
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
 app.use(cors());
+app.use(cookieParser());
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -25,28 +25,48 @@ connection.connect((err) => {
     return;
   }
   console.log('Connected to MySQL database');
-}); 
+});
 
-app.post('/api/userdetails', (req, res) => {
+
+
+// Middleware to verify JWT
+const verifyToken = (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
+  jwt.verify(token, 'your_secret_key', (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
+    req.user = decoded;
+    next();
+  });
+};
+
+app.use(cookieParser());
+
+app.post('/api/studentLogin', (req, res) => {
   const { registerNumber, password } = req.body;
 
-  const query = 'SELECT * FROM User_details WHERE RegisterNumber = ? AND Password = ?';
-  
-  connection.query(query, [registerNumber, password], (error, results) => {
-    if (error) {
-      console.error('Error querying MySQL: ', error);
-      res.status(500).json({ error: 'Internal server error' });
+  const query = 'SELECT * FROM studentdetails WHERE RegisterNumber = ? AND Password = ?';
+  connection.query(query, [registerNumber, password], (err, results) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
       return;
     }
 
-    if (results.length === 1) {
-
-      res.json({ success: true, message: 'Login successful' });
+    if (results.length > 0) {
+      res.status(200).json({ success: true, message: 'Login successful' });
     } else {
       res.status(401).json({ success: false, message: 'Invalid register number or password' });
     }
-  }); 
+  });
 });
+
 app.post('/bookdetails', (req, res) => {
     const { bookName, bookAuthor, date, bookDescription, department } = req.body;
 
@@ -61,11 +81,31 @@ app.post('/bookdetails', (req, res) => {
         }
     });
 });
+app.post('/api/adminLogin', (req, res) => {
+  const { registerNumber, password } = req.body;
+
+  const query = 'SELECT * FROM User_details WHERE RegisterNumber = ? AND Password = ?';
+  connection.query(query, [registerNumber, password], (error, results) => {
+    if (error) {
+      console.error('Error querying MySQL: ', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    if (results.length === 1) {
+      res.json({ success: true, message: 'Login successful' });
+    } else {
+      res.status(401).json({ success: false, message: 'Invalid register number or password' });
+    }
+  });
+});
+
+
+
+
 app.get('/api/bookslist', (req, res) => {
-  // Construct SQL query to fetch all books from the database
   const query = 'SELECT * FROM Books';
 
-  // Execute the query to fetch books from the database
   connection.query(query, (error, results) => {
     if (error) {
       console.error('Error querying MySQL:', error);
@@ -73,7 +113,6 @@ app.get('/api/bookslist', (req, res) => {
       return;
     }
 
-    // Send the fetched books as a response
     res.json(results);
   });
 });
@@ -81,10 +120,8 @@ app.get('/api/bookslist', (req, res) => {
 app.post('/api/deleteBooks', (req, res) => {
   const { name } = req.body;
 
- 
   const query = 'DELETE FROM Books WHERE BookName = ?';
 
-  // Execute the query
   connection.query(query, [name], (error, results) => {
     if (error) {
       console.error('Error deleting book:', error);
@@ -127,8 +164,30 @@ app.post('/api/search', (req, res) => {
   });
 });
 
+app.post('/api/borrowbooks', (req, res) => {
+  // Extract data from request body
+  const { registerNumber, fromDate, toDate, bookName } = req.body;
+
+  // Query to insert data into BorrowList table
+  const query = 'INSERT INTO BorrowList (RegisterNumber, FromDate, ToDate, BookName) VALUES (?, ?, ?, ?)';
+
+  // Execute the query with data from request body
+  connection.query(query, [registerNumber, fromDate, toDate, bookName], (error, results) => {
+    if (error) {
+      console.error('Error inserting data into BorrowList:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    // Data successfully inserted, send success response
+    res.status(200).json({ success: true, message: 'Data inserted successfully' });
+  });
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+ 
