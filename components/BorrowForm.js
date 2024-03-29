@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import DatePicker from 'react-native-datepicker'; // Import DatePicker from react-native-datepicker
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
+import DatePicker from 'react-native-modern-datepicker';
 
 const BorrowForm = ({ onSubmit }) => {
   const [registerNumber, setRegisterNumber] = useState('');
-  const [fromDate, setFromDate] = useState('');
+  const [fromDate, setFromDate] = useState(null); // Updated state to handle date
   const [toDate, setToDate] = useState('');
   const [bookName, setBookName] = useState('');
 
@@ -21,7 +21,7 @@ const BorrowForm = ({ onSubmit }) => {
       console.log('Response:', response.data);
 
       setRegisterNumber('');
-      setFromDate('');
+      setFromDate(null); // Reset date after submission
       setToDate('');
       setBookName('');
 
@@ -40,49 +40,13 @@ const BorrowForm = ({ onSubmit }) => {
         value={registerNumber}
         onChangeText={text => setRegisterNumber(text)}
       />
+      {/* Date picker for selecting from date */}
       <DatePicker
         style={styles.input}
-        date={fromDate}
-        mode="date"
-        placeholder="From Date"
-        format="YYYY-MM-DD"
-        minDate="1900-01-01"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: 0,
-            top: 4,
-            marginLeft: 0,
-          },
-          dateInput: {
-            marginLeft: 36,
-          },
-        }}
-        onDateChange={date => setFromDate(date)}
-      />
-      <DatePicker
-        style={styles.input}
-        date={toDate}
-        mode="date"
-        placeholder="To Date"
-        format="YYYY-MM-DD"
-        minDate="1900-01-01"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: 0,
-            top: 4,
-            marginLeft: 0,
-          },
-          dateInput: {
-            marginLeft: 36,
-          },
-        }}
-        onDateChange={date => setToDate(date)}
+        mode="calendar"
+        onSelectedChange={date => setFromDate(date)}
+        minimumDate={new Date()} // Prevent selecting past dates
+        placeholder="Select From Date"
       />
       <TextInput
         style={styles.input}
