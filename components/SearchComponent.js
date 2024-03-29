@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Picker, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
+import {Picker} from'@react-native-picker/picker'
+
 
 const SearchComponent = () => {
   const [searchText, setSearchText] = useState('');

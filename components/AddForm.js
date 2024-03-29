@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Picker } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import axios from 'axios';
+import {Picker} from'@react-native-picker/picker'
 
 const AddForm = ({ onSubmit }) => {
   const [bookName, setBookName] = useState('');
