@@ -1,66 +1,83 @@
-// StudentDashboard.js
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
-import BorrowBooks from '../components/BorrowBooks'; // Import BorrowBooks component
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import BorrowBooks from '../components/BorrowBooks';
+import Dues from '../components/Dues';
 import BorrowForm from '../components/BorrowForm';
 
-const StudentDashboard = () => {
+const StudentDashboard = ({ navigation }) => { // Pass navigation as props
   const [selectedAction, setSelectedAction] = useState(null);
-  const [showBorrowForm, setShowBorrowForm] = useState(false); // State to control the Borrow form modal
-  const [sidebarOpen, setSidebarOpen] = useState(false); // State to control the sidebar visibility
+  const [showBorrowForm, setShowBorrowForm] = useState(false);
+  const [showDues, setShowDues] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen); // Toggle the sidebar state
+    setSidebarOpen(!sidebarOpen);
   };
 
   const handleBorrowForm = () => {
-    setShowBorrowForm(true); // Show the Borrow form modal
-    setSidebarOpen(false); // Close the sidebar when Borrow form is opened
+    setShowBorrowForm(true);
   };
 
   const handleSidebarLinkClick = (action) => {
-    setSelectedAction(action); // Set the selected action
-    setSidebarOpen(false); // Close the sidebar when a link is clicked
+    setSelectedAction(action);
+    setSidebarOpen(false);
+    if (action === 'dues') {
+      setShowDues(true);
+    } else {
+      setShowDues(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.get('http://localhost:5000/api/logout'); // Add localhost:5000 to API call
+      // Redirect to login page after successful logout
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Hamburger menu */}
       <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
         <Ionicons name="menu" size={24} color="black" />
       </TouchableOpacity>
 
-      {/* Sidebar */}
       <Modal visible={sidebarOpen} transparent={true} animationType="slide">
         <View style={styles.sidebar}>
-          {/* Close button for sidebar */}
           <TouchableOpacity onPress={toggleSidebar} style={styles.closeButton}>
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
-          {/* Sidebar content */}
           <TouchableOpacity style={styles.sidebarLink} onPress={() => handleSidebarLinkClick('books')}>
             <Ionicons name="book-outline" size={24} color="black" />
             <Text style={styles.linkText}>Books</Text>
           </TouchableOpacity>
-          {/* Add more sidebar links as needed */}
+          <TouchableOpacity style={styles.sidebarLink} onPress={() => handleSidebarLinkClick('dues')}>
+            <Ionicons name="cash-outline" size={24} color="black" />
+            <Text style={styles.linkText}>Dues</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarLink} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={24} color="black" />
+            <Text style={styles.linkText}>Logout</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
-      {/* Main content */}
-      <View style={styles.mainContent}>
-        {/* Content based on selected action */}
-        {selectedAction === 'books' && <BorrowBooks onAddForm={handleBorrowForm} />} 
-        {/* Add more conditional rendering based on the selected action */}
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.mainContent}>
+          {selectedAction === 'books' && <BorrowBooks onAddForm={handleBorrowForm} />}
+          {selectedAction === 'dues' && <Dues />}
+        </View>
+      </ScrollView>
 
-      {/* Modal for Borrow form */}
       <Modal visible={showBorrowForm} animationType="slide">
         <View style={styles.modalContainer}>
           <TouchableOpacity onPress={() => setShowBorrowForm(false)}>
             <Ionicons name="close-circle-outline" size={24} color="black" />
           </TouchableOpacity>
-          {/* Render the Borrow form */}
           <BorrowForm onSubmit={() => setShowBorrowForm(false)} />
         </View>
       </Modal>
@@ -84,7 +101,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    zIndex: 1, // Ensure sidebar is above other content
+    zIndex: 1,
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -111,6 +128,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 });
 

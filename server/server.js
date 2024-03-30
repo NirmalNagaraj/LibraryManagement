@@ -262,6 +262,16 @@ app.get('/api/getborrowList', (req, res) => {
     });
   });
 });
+app.get('/api/logout', (req, res) => {
+  connection.query('TRUNCATE TABLE sessionData', (error, results) => {
+    if (error) {
+      console.error('Error truncating sessionData table:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.status(200).json({ success: true, message: 'Logged out successfully' });
+  });
+});
 
 
 const PORT = process.env.PORT || 5000;

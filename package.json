@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --tunnel ",
+    "start": "expo start  ",
     "back": "cd server && nodemon server.js",
     "android": "expo start --android",
     "ios": "expo start --ios",

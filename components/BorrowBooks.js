@@ -33,7 +33,6 @@ const BorrowBooks = () => {
   };
 
   return (
-    
     <View style={styles.container}>
       <TouchableOpacity style={styles.addButton} onPress={handleBorrowButton}>
         <Text style={styles.buttonText}>Borrow Book</Text>
@@ -73,12 +72,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButton: {
-    position: 'absolute',
-    top: 120,
     backgroundColor: '#007bff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 20, // Added margin bottom to provide space below the button
   },
   buttonText: {
     fontSize: 18,
@@ -119,7 +117,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 20,
-    // Increase the size of the card
     width: '100%',
   },
   bookNameText: {
