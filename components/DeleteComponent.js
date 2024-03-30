@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
+import baseURL from '../auth/connection';
 
 const DeleteComponent = () => {
   const [name, setName] = useState('');
@@ -9,7 +10,7 @@ const DeleteComponent = () => {
   const handleSubmit = async () => {
     try {
       
-      const response = await axios.post('http://localhost:5000/api/deleteBooks', {
+      const response = await axios.post(`${baseURL}/api/deleteBooks`, {
         name,
       });
       console.log('Delete response:', response.data);

@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import axios from 'axios';
 import {Picker} from'@react-native-picker/picker'
 import { useNavigation } from '@react-navigation/native';
+import baseURL from '../auth/connection';
 
 const Login = () => {
   const [registerNumber, setRegisterNumber] = useState('');
@@ -14,9 +15,9 @@ const Login = () => {
     try {
       let apiUrl = '';
       if (userType === 'student') {
-        apiUrl = 'http://localhost:5000/api/studentLogin'; // API endpoint for student login
+        apiUrl = `${baseURL}/api/studentLogin`;
       } else if (userType === 'admin') {
-        apiUrl = 'http://localhost:5000/api/adminLogin'; // API endpoint for admin login
+        apiUrl = `${baseURL}/api/adminLogin`;
       }
 
       const response = await axios.post(apiUrl, {

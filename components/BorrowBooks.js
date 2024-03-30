@@ -3,13 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import BorrowForm from './BorrowForm';
+import baseURL from '../auth/connection';
 
 const BorrowBooks = () => {
   const [borrowModalVisible, setBorrowModalVisible] = useState(false);
   const [borrowList, setBorrowList] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/getborrowList')
+    axios.get(`${baseURL}/api/getborrowList`)
       .then(response => {
         setBorrowList(response.data);
       })

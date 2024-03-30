@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import axios from 'axios';
+import baseURL from '../auth/connection';
 
 const BooksList = () => {
   const [books, setBooks] = useState([]);
@@ -9,7 +10,7 @@ const BooksList = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/bookslist');
+        const response = await axios.get(`${baseURL}/api/booksdetails`);
         setBooks(response.data);
         setLoading(false);
       } catch (error) {

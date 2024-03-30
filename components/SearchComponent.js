@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
 import {Picker} from'@react-native-picker/picker'
+import baseURL from '../auth/connection';
 
 
 const SearchComponent = () => {
@@ -11,7 +12,7 @@ const SearchComponent = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/search', {
+      const response = await axios.post(`${baseURL}/api/search`, {
         searchText,
         selectedFilter
       });

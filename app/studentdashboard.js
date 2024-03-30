@@ -5,6 +5,7 @@ import axios from 'axios';
 import BorrowBooks from '../components/BorrowBooks';
 import Dues from '../components/Dues';
 import BorrowForm from '../components/BorrowForm';
+import baseURL from '../auth/connection';
 
 const StudentDashboard = ({ navigation }) => { // Pass navigation as props
   const [selectedAction, setSelectedAction] = useState(null);
@@ -32,7 +33,7 @@ const StudentDashboard = ({ navigation }) => { // Pass navigation as props
 
   const handleLogout = async () => {
     try {
-      await axios.get('http://localhost:5000/api/logout'); // Add localhost:5000 to API call
+      await axios.get(`${baseURL}/api/logout`); // Add localhost:5000 to API call
       // Redirect to login page after successful logout
       navigation.navigate('Login');
     } catch (error) {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import axios from 'axios';
 import {Picker} from'@react-native-picker/picker'
+import baseURL from '../auth/connection';
 
 const AddForm = ({ onSubmit }) => {
   const [bookName, setBookName] = useState('');
@@ -18,7 +19,7 @@ const AddForm = ({ onSubmit }) => {
       const formattedDate = date.toISOString().split('T')[0];
 
       
-      const response = await axios.post('http://localhost:5000/bookdetails', {
+      const response = await axios.post(`${baseURL}/bookdetails`, {
         bookName,
         bookAuthor,
         date: formattedDate, 
