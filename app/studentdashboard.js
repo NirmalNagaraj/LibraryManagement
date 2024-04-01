@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+
 import BorrowBooks from '../components/BorrowBooks';
 import Dues from '../components/Dues';
 import BorrowForm from '../components/BorrowForm';
 import baseURL from '../auth/connection';
 
-const StudentDashboard = ({ navigation }) => { // Pass navigation as props
+const StudentDashboard = () => { // Pass navigation as props
   const [selectedAction, setSelectedAction] = useState(null);
   const [showBorrowForm, setShowBorrowForm] = useState(false);
   const [showDues, setShowDues] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const navigation = useNavigation();
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -34,7 +36,7 @@ const StudentDashboard = ({ navigation }) => { // Pass navigation as props
   const handleLogout = async () => {
     try {
       await axios.get(`${baseURL}/api/logout`); // Add localhost:5000 to API call
-      // Redirect to login page after successful logout
+     
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error logging out:', error);

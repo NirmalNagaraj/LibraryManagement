@@ -1,47 +1,44 @@
 // Dashboard.js
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
+import { Ionicons } from '@expo/vector-icons';
 import AddComponent from '../components/AddComponent';
-import AddForm from '../components/AddForm'; // Import the AddForm component
+import AddForm from '../components/AddForm';
 import DeleteComponent from '../components/DeleteComponent';
 import SearchComponent from '../components/SearchComponent';
 import BooksList from '../components/BooksList';
+import DuesComponent from '../components/DuesComponent.js'; // Import DuesComponent
 
 const Dashboard = () => {
   const [selectedAction, setSelectedAction] = useState(null);
-  const [showAddForm, setShowAddForm] = useState(false); // State to control the Add form modal
-  const [sidebarOpen, setSidebarOpen] = useState(false); // State to control the sidebar visibility
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleAddForm = () => {
-    setShowAddForm(true); // Show the Add form modal
-    setSidebarOpen(false); // Close the sidebar when Add form is opened
+    setShowAddForm(true);
+    setSidebarOpen(false);
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen); // Toggle the sidebar state
+    setSidebarOpen(!sidebarOpen);
   };
 
   const handleSidebarLinkClick = (action) => {
-    setSelectedAction(action); // Set the selected action
-    setSidebarOpen(false); // Close the sidebar when a link is clicked
+    setSelectedAction(action);
+    setSidebarOpen(false);
   };
 
   return (
     <View style={styles.container}>
-      {/* Hamburger menu */}
       <TouchableOpacity onPress={toggleSidebar} style={styles.menuButton}>
         <Ionicons name="menu" size={24} color="black" />
       </TouchableOpacity>
 
-      {/* Sidebar */}
       <Modal visible={sidebarOpen} transparent={true} animationType="slide">
         <View style={styles.sidebar}>
-          {/* Close button for sidebar */}
           <TouchableOpacity onPress={toggleSidebar} style={styles.closeButton}>
             <Ionicons name="close" size={24} color="black" />
           </TouchableOpacity>
-          {/* Sidebar content */}
           <TouchableOpacity style={styles.sidebarLink} onPress={() => handleSidebarLinkClick('add')}>
             <Ionicons name="add-circle-outline" size={24} color="black" />
             <Text style={styles.linkText}>Add</Text>
@@ -54,19 +51,21 @@ const Dashboard = () => {
             <Ionicons name="search-outline" size={24} color="black" />
             <Text style={styles.linkText}>Search</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarLink} onPress={() => handleSidebarLinkClick('dues')}>
+            <Ionicons name="cash-outline" size={24} color="black" />
+            <Text style={styles.linkText}>Dues</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
 
-      {/* Main content */}
       <View style={styles.mainContent}>
-        {/* Content based on selected action */}
         {selectedAction === 'add' && <AddComponent onAddForm={handleAddForm} />}
         {selectedAction === 'delete' && <DeleteComponent />}
         {selectedAction === 'search' && <SearchComponent />}
-        {!selectedAction && <BooksList />} 
+        {selectedAction === 'dues' && <DuesComponent />} {/* Render DuesComponent */}
+        {!selectedAction && <BooksList />}
       </View>
 
-      {/* Modal for Add form */}
       <Modal visible={showAddForm} animationType="slide">
         <View style={styles.modalContainer}>
           <TouchableOpacity onPress={() => setShowAddForm(false)}>
@@ -95,7 +94,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    zIndex: 1, // Ensure sidebar is above other content
+    zIndex: 1,
   },
   closeButton: {
     alignSelf: 'flex-end',
@@ -126,6 +125,3 @@ const styles = StyleSheet.create({
 });
 
 export default Dashboard;
-
-
-

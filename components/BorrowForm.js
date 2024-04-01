@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'reac
 import axios from 'axios';
 import DatePicker from 'react-native-modern-datepicker';
 import baseURL from '../auth/connection';
+import Snackbar from 'react-native-snackbar';
 
 const BorrowForm = ({ onSubmit }) => {
   const [fromDate, setFromDate] = useState(null);
@@ -21,13 +22,20 @@ const BorrowForm = ({ onSubmit }) => {
 
       console.log('Response:', response.data);
 
-      setFromDate(null);
-      setToDate(null);
-      setBookName('');
+      // Show success message
+      Snackbar.show({
+        text: 'Book borrowed successfully',
+        duration: Snackbar.LENGTH_SHORT,
+      });
 
       onSubmit();
     } catch (error) {
       console.error('Error submitting form:', error);
+      // Show error message
+      Snackbar.show({
+        text: 'Failed to borrow book. Please try again.',
+        duration: Snackbar.LENGTH_SHORT,
+      });
     }
   };
 

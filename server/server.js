@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-
+const moment = require('moment');
 const app = express();
 
 app.use(bodyParser.json());
@@ -80,12 +80,12 @@ app.post('/api/studentLogin', (req, res) => {
 });
 
 
-app.post('/bookdetails', (req, res) => {
-    const { bookName, bookAuthor, date, bookDescription, department } = req.body;
+app.post('/api/addBook', (req, res) => {
+    const { bookName, bookAuthor, date, bookDescription, department, shelfNumber, count } = req.body;
 
-    const query = 'INSERT INTO Books (BookName, BookAuthor, PublishedDate, BookDescription, Department) VALUES (?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO Books (BookName, BookAuthor, PublishedDate, BookDescription, Department, ShelfNumber, Count) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
-    connection.query(query, [bookName, bookAuthor, date, bookDescription, department], (error, results) => {
+    connection.query(query, [bookName, bookAuthor, date, bookDescription, department, shelfNumber, count], (error, results) => {
         if (error) {
             console.error('Error inserting book details:', error);
             res.status(500).json({ success: false, message: 'Failed to insert book details' });
@@ -94,6 +94,7 @@ app.post('/bookdetails', (req, res) => {
         }
     });
 });
+
 app.post('/api/adminLogin', (req, res) => {
   const { registerNumber, password } = req.body;
 
@@ -141,7 +142,7 @@ app.get('/logout', (req, res) => {
 
     res.json(results);
     res.status(200).json({success:"Logout"});
-  });
+  }); 
 });
 
 app.post('/api/deleteBooks', (req, res) => {
@@ -192,45 +193,66 @@ app.post('/api/search', (req, res) => {
 });
 
 app.post('/api/borrowbooks', (req, res) => {
-  // Query to retrieve register number from sessionData table where id is 1
-  const selectQuery = 'SELECT registerNumber FROM sessionData WHERE id = ?';
-  
-  // Execute the SELECT query to retrieve the register number
-  connection.query(selectQuery, [1], (selectError, selectResults) => {
-    if (selectError) {
-      console.error('Error retrieving register number from sessionData:', selectError);
+  // Extract data from the request body
+  const { fromDate, toDate, bookName } = req.body;
+
+  // Query to check if the book exists in the Books table
+  const checkBookQuery = 'SELECT * FROM Books WHERE BookName = ?';
+
+  // Execute the SELECT query to check if the book exists
+  connection.query(checkBookQuery, [bookName], (checkBookError, checkBookResults) => {
+    if (checkBookError) {
+      console.error('Error checking book:', checkBookError);
       res.status(500).json({ error: 'Internal server error' });
       return;
     }
 
-    if (selectResults.length === 0) {
-      // No register number found in sessionData with id 1
-      res.status(404).json({ error: 'Register number not found in sessionData' });
+    if (checkBookResults.length === 0) {
+      // Book not found in the Books table
+      res.status(404).json({ error: 'Book not found' });
       return;
     }
 
-    // Extract register number from the result
-    const registerNumber = selectResults[0].registerNumber;
+    // Book exists, proceed to insert data into BorrowList table
 
-    // Extract other data from the request body
-    const { fromDate, toDate, bookName } = req.body;
-
-    // Query to insert data into BorrowList table
-    const insertQuery = 'INSERT INTO BorrowList (RegisterNumber, FromDate, ToDate, BookName) VALUES (?, ?, ?, ?)';
-
-    // Execute the INSERT query with data from request body and retrieved register number
-    connection.query(insertQuery, [registerNumber, fromDate, toDate, bookName], (insertError, insertResults) => {
-      if (insertError) {
-        console.error('Error inserting data into BorrowList:', insertError);
+    // Query to retrieve register number from sessionData table where id is 1
+    const selectQuery = 'SELECT registerNumber FROM sessionData WHERE id = ?';
+  
+    // Execute the SELECT query to retrieve the register number
+    connection.query(selectQuery, [1], (selectError, selectResults) => {
+      if (selectError) {
+        console.error('Error retrieving register number from sessionData:', selectError);
         res.status(500).json({ error: 'Internal server error' });
         return;
       }
 
-      // Data successfully inserted, send success response
-      res.status(200).json({ success: true, message: 'Data inserted successfully' });
+      if (selectResults.length === 0) {
+        // No register number found in sessionData with id 1
+        res.status(404).json({ error: 'Register number not found in sessionData' });
+        return;
+      }
+
+      // Extract register number from the result
+      const registerNumber = selectResults[0].registerNumber;
+
+      // Query to insert data into BorrowList table
+      const insertQuery = 'INSERT INTO BorrowList (RegisterNumber, FromDate, ToDate, BookName) VALUES (?, ?, ?, ?)';
+
+      // Execute the INSERT query with data from request body and retrieved register number
+      connection.query(insertQuery, [registerNumber, fromDate, toDate, bookName], (insertError, insertResults) => {
+        if (insertError) {
+          console.error('Error inserting data into BorrowList:', insertError);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+
+        // Data successfully inserted, send success response
+        res.status(200).json({ success: true, message: 'Data inserted successfully' });
+      });
     });
   });
 });
+
 app.get('/api/getborrowList', (req, res) => {
   // Query to retrieve register number from sessionData table
   const getSessionDataQuery = 'SELECT registerNumber FROM sessionData WHERE id = ?';
@@ -273,6 +295,119 @@ app.get('/api/logout', (req, res) => {
   });
 });
 
+
+
+
+app.get('/api/duesList', (req, res) => {
+  // Query to select all data from BorrowList table
+  const query = 'SELECT * FROM BorrowList';
+
+  // Execute the query
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching dues list:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results); // Send the results as JSON response
+    }
+  });
+});
+app.get('/api/getDues', (req, res) => {
+  // Get the current date
+  const currentDate = moment().format('YYYY-MM-DD');
+
+  // Query to retrieve register number from sessionData table
+  const getSessionDataQuery = 'SELECT registerNumber FROM sessionData WHERE id = ?';
+
+  // Execute query to retrieve register number
+  connection.query(getSessionDataQuery, [1], (getSessionDataError, sessionDataResults) => {
+    if (getSessionDataError) {
+      console.error('Error fetching register number from sessionData:', getSessionDataError);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    // Extract register number from sessionDataResults
+    const registerNumber = sessionDataResults[0].registerNumber;
+
+    // Query to retrieve dues data based on register number and current date
+    const getDuesQuery = 'SELECT * FROM BorrowList WHERE RegisterNumber = ? AND ToDate < ?';
+
+    // Execute query to retrieve dues data
+    connection.query(getDuesQuery, [registerNumber, currentDate], (getDuesError, duesResults) => {
+      if (getDuesError) {
+        console.error('Error fetching dues data:', getDuesError);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+
+      // Send dues data as response
+      res.status(200).json(duesResults);
+    });
+  });
+});
+app.get('/api/checkUser', (req, res) => {
+  
+
+  // Query to retrieve RegisterNumber from sessionData
+  const getSessionDataQuery = 'SELECT RegisterNumber FROM sessionData WHERE id = ?';
+
+  connection.query(getSessionDataQuery, [1], (error, sessionDataResults) => {
+    if (error) {
+      console.error('Error fetching register number from sessionData:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    const registerNumber = sessionDataResults[0].RegisterNumber;
+
+    // Query to check if the user profile exists for the given registerNumber
+    const checkUserQuery = 'SELECT * FROM UserProfile WHERE RegisterNumber = ?';
+
+    connection.query(checkUserQuery, [registerNumber], (checkUserError, results) => {
+      if (checkUserError) {
+        console.error('Error checking user profile:', checkUserError);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+
+      // If user profile exists, send success response
+      if (results.length > 0) {
+        res.status(200).json({ setupComplete: true });
+      } else {
+        res.status(200).json({ setupComplete: false });
+      }
+    });
+  });
+});
+
+app.post('/api/addProfile', (req, res) => {
+  const { name, department, year, section } = req.body;
+  
+  // Retrieve RegisterNumber from sessionData table
+  const getSessionDataQuery = 'SELECT RegisterNumber FROM sessionData WHERE id = ?';
+  connection.query(getSessionDataQuery, [1], (getSessionDataError, sessionDataResults) => {
+    if (getSessionDataError) {
+      console.error('Error fetching register number from sessionData:', getSessionDataError);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    const registerNumber = sessionDataResults[0].RegisterNumber;
+
+    // Insert data into UserProfile table
+    const insertProfileQuery = 'INSERT INTO UserProfile (RegisterNumber, Name, Dept, Year, Section) VALUES (?, ?, ?, ?, ?)';
+    connection.query(insertProfileQuery, [registerNumber, name, department, year, section], (insertError, insertResults) => {
+      if (insertError) {
+        console.error('Error inserting profile data:', insertError);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+      
+      res.status(200).json({ message: 'Profile added successfully' });
+    });
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

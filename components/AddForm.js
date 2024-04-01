@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import axios from 'axios';
-import {Picker} from'@react-native-picker/picker'
+import { Picker } from '@react-native-picker/picker';
 import baseURL from '../auth/connection';
 
 const AddForm = ({ onSubmit }) => {
@@ -9,24 +9,22 @@ const AddForm = ({ onSubmit }) => {
   const [bookAuthor, setBookAuthor] = useState('');
   const [date, setDate] = useState(new Date());
   const [bookDescription, setBookDescription] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState(''); 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [shelfNumber, setShelfNumber] = useState('');
+  const [count, setCount] = useState('');
 
   const handleSubmit = async () => {
     try {
-      
       const formattedDate = date.toISOString().split('T')[0];
-
-      
-      const response = await axios.post(`${baseURL}/bookdetails`, {
-        bookName,
-        bookAuthor,
-        date: formattedDate, 
-        bookDescription,
-        department: selectedDepartment, 
+      const response = await axios.post(`${baseURL}/api/addBook`, {
+        BookName: bookName,
+        BookAuthor: bookAuthor,
+        PublishedDate: formattedDate,
+        BookDescription: bookDescription,
+        Department: selectedDepartment,
+        ShelfNumber: shelfNumber,
+        Count: count,
       });
-
       console.log('Response:', response.data);
 
       setBookName('');
@@ -34,11 +32,12 @@ const AddForm = ({ onSubmit }) => {
       setDate(new Date());
       setBookDescription('');
       setSelectedDepartment('');
+      setShelfNumber('');
+      setCount('');
 
       onSubmit();
     } catch (error) {
       console.error('Error submitting form:', error);
-      
     }
   };
 
@@ -71,25 +70,26 @@ const AddForm = ({ onSubmit }) => {
         <Picker.Item label="S&H" value="S&H" />
         <Picker.Item label="GENERAL" value="GENERAL" />
       </Picker>
-      {Platform.OS === 'ios' && showDatePicker && (
+      <TextInput
+        style={styles.input}
+        placeholder="Shelf Number"
+        value={shelfNumber}
+        onChangeText={text => setShelfNumber(text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Count"
+        value={count}
+        onChangeText={text => setCount(text)}
+        keyboardType="numeric"
+      />
+      {Platform.OS === 'ios' && (
         <DatePickerIOS
           date={date}
           onDateChange={newDate => setDate(newDate)}
           mode="date"
         />
       )}
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => setShowDatePicker(!showDatePicker)}
-      >
-        <Text>{date.toLocaleDateString()}</Text>
-      </TouchableOpacity>
-      <TextInput
-        style={styles.input}
-        placeholder="Book Description"
-        value={bookDescription}
-        onChangeText={text => setBookDescription(text)}
-      />
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>

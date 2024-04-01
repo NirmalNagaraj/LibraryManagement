@@ -57,7 +57,7 @@ const BorrowBooks = () => {
           <View key={index} style={styles.cardContainer}>
             <View style={styles.card}>
               <Text style={styles.bookNameText}>{item.BookName}</Text>
-              <Text style={styles.validityText}>Upto {formatDate(item.ToDate)}</Text>
+              <Text style={styles.validityText}>Bought on {formatDate(item.FromDate)}</Text>
             </View>
           </View>
         ))

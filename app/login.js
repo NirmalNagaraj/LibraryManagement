@@ -28,7 +28,7 @@ const Login = () => {
       if (response.data.success) {
         console.log('Login successful');
         if (userType === 'student') {
-          navigation.navigate('StudentDashboard'); // Navigate to StudentDashboard if userType is student
+          navigation.navigate('DashboardWrapper'); // Navigate to StudentDashboard if userType is student
         } else if (userType === 'admin') {
           navigation.navigate('Dashboard'); // Navigate to AdminDashboard if userType is admin
         }
