@@ -8,6 +8,8 @@ import DeleteComponent from '../components/DeleteComponent';
 import SearchComponent from '../components/SearchComponent';
 import BooksList from '../components/BooksList';
 import DuesComponent from '../components/DuesComponent.js'; // Import DuesComponent
+import Requests from '../components/Requests';
+
 
 const Dashboard = () => {
   const [selectedAction, setSelectedAction] = useState(null);
@@ -55,6 +57,11 @@ const Dashboard = () => {
             <Ionicons name="cash-outline" size={24} color="black" />
             <Text style={styles.linkText}>Dues</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarLink} onPress={() => handleSidebarLinkClick('requests')}>
+            <Ionicons name="alert-circle-outline" size={24} color="black" />
+            <Text style={styles.linkText}>Requests</Text>
+          </TouchableOpacity>
+
         </View>
       </Modal>
 
@@ -62,7 +69,9 @@ const Dashboard = () => {
         {selectedAction === 'add' && <AddComponent onAddForm={handleAddForm} />}
         {selectedAction === 'delete' && <DeleteComponent />}
         {selectedAction === 'search' && <SearchComponent />}
-        {selectedAction === 'dues' && <DuesComponent />} {/* Render DuesComponent */}
+        {selectedAction === 'dues' && <DuesComponent />} 
+        {selectedAction === 'requests' && <Requests />}
+
         {!selectedAction && <BooksList />}
       </View>
 

@@ -34,17 +34,16 @@ const BooksList = () => {
       ) : (
         <ScrollView style={styles.scrollView} horizontal={true}>
           <View style={styles.table}>
-            <View style={styles.tableRow}>
-              
-              <Text style={[styles.headerCell, styles.cellWidth20]}>Book Name</Text>
-              <Text style={[styles.headerCell, styles.cellWidth15]}>Published Date</Text>
-              <Text style={[styles.headerCell, styles.cellWidth10]}>Domain</Text>
+            <View style={styles.tableHeader}>
+              <Text style={[styles.headerCell, styles.cellWidth33]}>Book Name</Text>
+              <Text style={[styles.headerCell, styles.cellWidth33]}>Published Date</Text>
+              <Text style={[styles.headerCell, styles.cellWidth33]}>Domain</Text>
             </View>
             {books.map((book) => (
               <View key={book.BookID} style={styles.tableRow}>
-                <Text style={[styles.cell, styles.cellWidth20]}>{book.BookName}</Text>
-                <Text style={[styles.cell, styles.cellWidth15]}>{book.PublishedDate}</Text>
-                <Text style={[styles.cell, styles.cellWidth10]}>{book.Department}</Text>
+                <Text style={[styles.cell, styles.cellWidth33]}>{book.BookName}</Text>
+                <Text style={[styles.cell, styles.cellWidth33]}>{book.PublishedDate}</Text>
+                <Text style={[styles.cell, styles.cellWidth33]}>{book.Department}</Text>
               </View>
             ))}
           </View>
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: windowWidth < 600 ? 24 : 32, // Set font size based on screen width
+    fontSize: windowWidth < 600 ? 24 : 32,
     fontWeight: 'bold',
     marginBottom: 20,
   },
@@ -79,6 +78,12 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     borderRadius: 5,
   },
+  tableHeader: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#000000',
+    backgroundColor: '#f0f0f0',
+  },
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
@@ -89,25 +94,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     fontWeight: 'bold',
     textAlign: 'center',
-    fontSize: windowWidth < 600 ? 16 : 20, // Set font size based on screen width
+    fontSize: windowWidth < 600 ? 16 : 20,
   },
   cell: {
     paddingVertical: 10,
     paddingHorizontal: 5,
     textAlign: 'center',
-    fontSize: windowWidth < 600 ? 16 : 20, // Set font size based on screen width
+    fontSize: windowWidth < 600 ? 16 : 20,
   },
-  cellWidth10: {
-    width: '10%',
-  },
-  cellWidth20: {
-    width: '20%',
-  },
-  cellWidth15: {
-    width: '15%',
-  },
-  cellWidth25: {
-    width: '25%',
+  cellWidth33: {
+    width: '33%',
   },
 });
 

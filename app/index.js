@@ -7,16 +7,18 @@ import Dashboard from './dashboard';
 import DashboardWrapper from '../components/DashboardWrapper';
 import StudentDashboard from './studentdashboard';
 
+
 const Stack = createStackNavigator();
 
 const Index = () => {
   return (
     <Stack.Navigator>
+  
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="StudentDashboard" component={StudentDashboard} /> 
-      <Stack.Screen name="DashboardWrapper" component={DashboardWrapper} /> 
+      <Stack.Screen name="StudentDashboard" component={StudentDashboard}  options={{ headerShown: false }} /> 
+      <Stack.Screen name="DashboardWrapper" component={DashboardWrapper}  options={{ headerShown: false }}/> 
 
-      <Stack.Screen name="Dashboard" component={Dashboard} />
+      <Stack.Screen name="Dashboard" component={Dashboard}  options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 };

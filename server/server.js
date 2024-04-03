@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const moment = require('moment');
 const app = express();
+const sendEmail = require('./mail');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -60,7 +61,7 @@ app.post('/api/studentLogin', (req, res) => {
     }
 
     if (results.length > 0) {
-      // Login successful, insert registerNumber into sessionData table
+      
       const insertQuery = 'INSERT INTO sessionData (registerNumber) VALUES (?)';
       connection.query(insertQuery, [registerNumber], (insertErr, insertResults) => {
         if (insertErr) {
@@ -382,7 +383,7 @@ app.get('/api/checkUser', (req, res) => {
 });
 
 app.post('/api/addProfile', (req, res) => {
-  const { name, department, year, section } = req.body;
+  const { name, department, year, section ,email} = req.body;
   
   // Retrieve RegisterNumber from sessionData table
   const getSessionDataQuery = 'SELECT RegisterNumber FROM sessionData WHERE id = ?';
@@ -396,8 +397,8 @@ app.post('/api/addProfile', (req, res) => {
     const registerNumber = sessionDataResults[0].RegisterNumber;
 
     // Insert data into UserProfile table
-    const insertProfileQuery = 'INSERT INTO UserProfile (RegisterNumber, Name, Dept, Year, Section) VALUES (?, ?, ?, ?, ?)';
-    connection.query(insertProfileQuery, [registerNumber, name, department, year, section], (insertError, insertResults) => {
+    const insertProfileQuery = 'INSERT INTO UserProfile (RegisterNumber, Name, Dept, Year, Section ,Email) VALUES (?, ?, ?, ?, ?,?)';
+    connection.query(insertProfileQuery, [registerNumber, name, department, year, section ,email], (insertError, insertResults) => {
       if (insertError) {
         console.error('Error inserting profile data:', insertError);
         res.status(500).json({ error: 'Internal server error' });
@@ -408,6 +409,169 @@ app.post('/api/addProfile', (req, res) => {
     });
   });
 });
+app.post('/api/returnBook', (req, res) => {
+  // Extract book name from request body
+  const { bookName } = req.body;
+
+  // Query to retrieve register number from sessionData table where id is 1
+  const selectQuery = 'SELECT registerNumber FROM sessionData WHERE id = ?';
+  
+  // Execute the SELECT query to retrieve the register number
+  connection.query(selectQuery, [1], (selectError, selectResults) => {
+    if (selectError) {
+      console.error('Error retrieving register number from sessionData:', selectError);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    if (selectResults.length === 0) {
+      // No register number found in sessionData with id 1
+      res.status(404).json({ error: 'Register number not found in sessionData' });
+      return;
+    }
+
+    // Extract register number from the result
+    const registerNumber = selectResults[0].registerNumber;
+
+    // Query to delete book from BorrowList table based on registerNumber and bookName
+    const deleteQuery = 'DELETE FROM BorrowList WHERE RegisterNumber = ? AND BookName = ?';
+
+    // Execute the DELETE query with registerNumber and bookName
+    connection.query(deleteQuery, [registerNumber, bookName], (deleteError, deleteResults) => {
+      if (deleteError) {
+        console.error('Error deleting book from BorrowList:', deleteError);
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }
+
+      // Book successfully returned, send success response
+      res.status(200).json({ success: true, message: 'Book returned successfully' });
+    });
+  });
+});
+app.post('/api/extendBooks', (req, res) => {
+    // Extract book name from request body
+    const { bookName } = req.body;
+
+    // Query to update extend field in BorrowList table
+    const updateQuery = 'UPDATE BorrowList SET extend = 1 WHERE RegisterNumber = (SELECT registerNumber FROM sessionData WHERE id = 1) AND BookName = ?';
+
+    // Execute the update query
+    connection.query(updateQuery, [bookName], (error, results) => {
+        if (error) {
+            console.error('Error extending book borrowing:', error);
+            res.status(500).json({ success: false, message: 'Failed to extend book borrowing' });
+        } else {
+            res.json({ success: true, message: 'Book borrowing extended successfully' });
+        }
+    });
+  });
+
+  app.get('/api/requests', (req, res) => {
+  // Query to fetch data from BorrowList where extend field is 1
+  const selectQuery = 'SELECT * FROM BorrowList WHERE extend = 1';
+
+  // Execute the query
+  connection.query(selectQuery, (error, results) => {
+    if (error) {
+      console.error('Error fetching requests:', error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    // Send the fetched data as response
+    res.status(200).json(results);
+  });
+});
+app.post('/api/approve', (req, res) => {
+  const { registerNumber, bookName } = req.body;
+  
+  // Increment the ToDate by 10 days
+  const query = `
+    UPDATE BorrowList 
+    SET ToDate = DATE_ADD(ToDate, INTERVAL 10 DAY), extend = 0 
+    WHERE RegisterNumber = ? AND BookName = ?
+  `;
+  connection.query(query, [registerNumber, bookName], async (error, results) => {
+    if (error) {
+      console.error('Error approving request:', error);
+      res.status(500).json({ success: false, message: 'Failed to approve request. Please try again.' });
+    } else {
+      // Check if any rows were affected
+      if (results.affectedRows > 0) {
+        // Fetch email from UserProfile using registerNumber
+        const emailQuery = `
+          SELECT Email FROM UserProfile WHERE RegisterNumber = ?
+        `;
+        connection.query(emailQuery, [registerNumber], async (error, userResults) => {
+          if (error) {
+            console.error('Error fetching email:', error);
+            res.status(500).json({ success: false, message: 'Failed to fetch email. Please try again.' });
+          } else {
+            // Send email if email is found
+            if (userResults.length > 0 && userResults[0].Email) {
+              const toEmail = userResults[0].Email;
+              const subject = 'Your request has been approved!';
+              const text = 'Your request has been approved!';
+              
+              // Send email
+              try {
+                await sendEmail(toEmail, subject, text);
+                console.log('Email sent successfully');
+                res.status(200).json({ success: true, message: 'Request approved successfully' });
+              } catch (error) {
+                console.error('Error sending email:', error);
+                res.status(500).json({ success: false, message: 'Failed to send email. Please try again.' });
+              }
+            } else {
+              res.status(404).json({ success: false, message: 'No email found for the provided register number.' });
+            }
+          }
+        });
+      } else {
+        res.status(404).json({ success: false, message: 'No matching records found' });
+      }
+    }
+  });
+});
+
+app.post('/api/notify', (req, res) => {
+  try {
+    const { registerNumber, bookName } = req.body;
+ 
+    // Query the database to get the email address associated with the register number
+    const query = 'SELECT Email FROM UserProfile WHERE RegisterNumber = ?';
+    connection.query(query, [registerNumber], (error, results) => {
+      if (error) {
+        console.error('Error fetching email:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch email. Please try again.' });
+      } else {
+        if (results.length > 0 && results[0].Email) {
+          const toEmail = results[0].Email;
+          const subject = 'Notification: Return Overdue Book'; // Customize the subject as needed
+          const text = `Hello ${registerNumber},\n\nThis is to notify you that you are required to return the book "${bookName}" as it is past due.\n\nThank you.`; // Customize the email body as needed
+
+          // Send email notification
+          sendEmail(toEmail, subject, text)
+            .then(() => {
+              console.log('Email sent successfully');
+              res.status(200).json({ success: true, message: 'Email sent successfully' });
+            })
+            .catch((error) => {
+              console.error('Error sending email:', error);
+              res.status(500).json({ success: false, message: 'Failed to send email. Please try again.' });
+            });
+        } else {
+          res.status(404).json({ success: false, message: 'No email found for the provided register number.' });
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ success: false, message: 'Failed to send email. Please try again.' });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -1,5 +1,5 @@
-import React, { useState ,useEffect} from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import baseURL from '../auth/connection';
@@ -8,22 +8,44 @@ const Dues = () => {
   const [dues, setDues] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseURL}/api/getDues`) // Use baseURL for API call
-      .then(response => {
-        setDues(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching dues:', error);
-      });
+    fetchDues();
   }, []);
+
+  const fetchDues = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/getDues`);
+      setDues(response.data);
+    } catch (error) {
+      console.error('Error fetching dues:', error);
+    }
+  };
 
   const handleReturnBook = async (bookName) => {
     try {
-      await axios.post(`${baseURL}/api/returnBook`, { bookName });
-      console.log('Book returned successfully:', bookName);
-      // Optionally, you can update the dues list after successful return
+      const response = await axios.post(`${baseURL}/api/returnBook`, {
+        bookName: bookName,
+      });
+      if (response.data.success) {
+        // Reload dues after book is returned
+        fetchDues();
+      }
     } catch (error) {
       console.error('Error returning book:', error);
+    }
+  };
+
+  const handleExtendDue = async (bookName) => {
+    try {
+      const response = await axios.post(`${baseURL}/api/extendBooks`, {
+        bookName: bookName,
+      });
+      if (response.data.success) {
+        // Reload dues after due date is extended
+        Alert.alert("Request Sent!");
+        fetchDues();
+      }
+    } catch (error) {
+      console.error('Error extending due date:', error);
     }
   };
 
@@ -34,7 +56,12 @@ const Dues = () => {
         <View key={index} style={styles.card}>
           <Text style={styles.cardTitle}>{item.BookName}</Text>
           <Text>Due Date: {moment(item.ToDate).format('MMMM DD, YYYY')}</Text>
-          <Button title="Return" onPress={() => handleReturnBook(item.BookName)} />
+          <TouchableOpacity onPress={() => handleExtendDue(item.BookName)} style={styles.button}>
+            <Text style={styles.buttonText}>Extend</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleReturnBook(item.BookName)} style={[styles.button, styles.returnButton]}>
+            <Text style={styles.buttonText}>Return</Text>
+          </TouchableOpacity>
         </View>
       ))}
     </View>
@@ -63,6 +90,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  returnButton: {
+    backgroundColor: '#dc3545',
+    marginTop: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

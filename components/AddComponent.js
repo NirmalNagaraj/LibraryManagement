@@ -1,6 +1,7 @@
 // AddComponent.js
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import BooksList from './BooksList';
 
 const AddComponent = ({ onAddForm }) => {
   return (
@@ -9,7 +10,9 @@ const AddComponent = ({ onAddForm }) => {
       {/* Render the Add form button */}
       <TouchableOpacity style={styles.addButton} onPress={onAddForm}>
         <Text style={styles.buttonText}>Add Form</Text>
+        
       </TouchableOpacity>
+      <BooksList />
     </View>
   );
 };

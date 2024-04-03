@@ -10,14 +10,17 @@ const BorrowBooks = () => {
   const [borrowList, setBorrowList] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseURL}/api/getborrowList`)
-      .then(response => {
-        setBorrowList(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching borrow list:', error);
-      });
-  }, []); 
+    fetchBorrowList();
+  }, []);
+
+  const fetchBorrowList = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/api/getborrowList`);
+      setBorrowList(response.data);
+    } catch (error) {
+      console.error('Error fetching borrow list:', error);
+    }
+  };
 
   const handleBorrowButton = () => {
     setBorrowModalVisible(true);
@@ -25,6 +28,7 @@ const BorrowBooks = () => {
 
   const handleCloseModal = () => {
     setBorrowModalVisible(false);
+    fetchBorrowList(); // Fetch borrow list again after modal is closed
   };
 
   const formatDate = (dateString) => {

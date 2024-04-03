@@ -9,10 +9,11 @@ const UserProfile = ({ onSubmitSuccess }) => {
   const [department, setDepartment] = useState('');
   const [year, setYear] = useState('');
   const [section, setSection] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleSubmit = async () => {
     try {
-      const userData = { name, department, year, section };
+      const userData = { name, department, year, section, email };
       await axios.post(`${baseURL}/api/addProfile`, userData);
       console.log('Profile added successfully!');
       onSubmitSuccess();
@@ -29,6 +30,13 @@ const UserProfile = ({ onSubmitSuccess }) => {
         value={name}
         onChangeText={setName}
         placeholder="Enter your name"
+      />
+      <TextInput
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+        placeholder="Enter your email"
+        keyboardType="email-address"
       />
 
       <Picker

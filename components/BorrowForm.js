@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, Alert } from 'react-native';
 import axios from 'axios';
 import DatePicker from 'react-native-modern-datepicker';
 import baseURL from '../auth/connection';
-import Snackbar from 'react-native-snackbar';
 
 const BorrowForm = ({ onSubmit }) => {
   const [fromDate, setFromDate] = useState(null);
@@ -23,19 +22,11 @@ const BorrowForm = ({ onSubmit }) => {
       console.log('Response:', response.data);
 
       // Show success message
-      Snackbar.show({
-        text: 'Book borrowed successfully',
-        duration: Snackbar.LENGTH_SHORT,
-      });
-
-      onSubmit();
+      Alert.alert('Success', 'Book borrowed successfully', [{ text: 'OK', onPress: onSubmit }]);
     } catch (error) {
       console.error('Error submitting form:', error);
       // Show error message
-      Snackbar.show({
-        text: 'Failed to borrow book. Please try again.',
-        duration: Snackbar.LENGTH_SHORT,
-      });
+      Alert.alert('Error', 'Failed to borrow book. Please try again.');
     }
   };
 
