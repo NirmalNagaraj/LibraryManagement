@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native'; // Import Image component
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
+import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins'; // Import Poppins font
+
 import baseURL from '../auth/connection'; // Import baseURL from connection file
 
 const UserProfile = ({ onSubmitSuccess }) => {
@@ -10,6 +12,15 @@ const UserProfile = ({ onSubmitSuccess }) => {
   const [year, setYear] = useState('');
   const [section, setSection] = useState('');
   const [email, setEmail] = useState('');
+
+  let [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null; // Return null while the font is loading
+  }
 
   const handleSubmit = async () => {
     try {
@@ -24,6 +35,11 @@ const UserProfile = ({ onSubmitSuccess }) => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../profile.png')} // Image location
+        style={styles.image}
+        resizeMode="cover"
+      />
       <Text style={styles.title}>User Profile</Text>
       <TextInput
         style={styles.input}
@@ -40,7 +56,7 @@ const UserProfile = ({ onSubmitSuccess }) => {
       />
 
       <Picker
-        style={styles.input}
+        style={[styles.input, styles.picker]}
         selectedValue={department}
         onValueChange={setDepartment}
       >
@@ -55,7 +71,7 @@ const UserProfile = ({ onSubmitSuccess }) => {
       </Picker>
 
       <Picker
-        style={styles.input}
+        style={[styles.input, styles.picker]}
         selectedValue={year}
         onValueChange={setYear}
       >
@@ -67,7 +83,7 @@ const UserProfile = ({ onSubmitSuccess }) => {
       </Picker>
 
       <Picker
-        style={styles.input}
+        style={[styles.input, styles.picker]}
         selectedValue={section}
         onValueChange={setSection}
       >
@@ -76,7 +92,12 @@ const UserProfile = ({ onSubmitSuccess }) => {
         <Picker.Item label="B" value="B" />
       </Picker>
 
-      <Button title="Submit" onPress={handleSubmit} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit}
+      >
+        <Text style={styles.buttonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -86,6 +107,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FAF4F0',
+  },
+  image: {
+    width: 200, // Adjust width as needed
+    height: 200, // Adjust height as needed
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -96,10 +123,27 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#391A09',
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
+  },
+  picker: {
+    color: '#391A09',
+    backgroundColor: '#FAF4F0',
+  },
+  button: {
+    width: 150,
+    height: 40,
+    backgroundColor: '#391A09',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
 

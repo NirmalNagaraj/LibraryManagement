@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import axios from 'axios';
-import {Picker} from'@react-native-picker/picker'
+import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins'; // Import Poppins font
 import baseURL from '../auth/connection';
+
+ 
 
 const Login = () => {
   const [registerNumber, setRegisterNumber] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('student');
   const navigation = useNavigation();
+
+  let [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null; // Return null while the font is loading
+  }
 
   const handleLogin = async () => {
     try {
@@ -42,19 +54,24 @@ const Login = () => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../login.png')}
+        style={styles.image}
+        resizeMode="cover"
+      />
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Register Number"
         value={registerNumber}
-        onChangeText={text => setRegisterNumber(text)}
+        onChangeText={(text) => setRegisterNumber(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
         secureTextEntry
         value={password}
-        onChangeText={text => setPassword(text)}
+        onChangeText={(text) => setPassword(text)}
       />
       <Picker
         selectedValue={userType}
@@ -73,28 +90,35 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FAF4F0',
+  },
+  image: {
+    width: 340,
+    height: 340,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    color: '#391A09',
+    fontFamily: 'Poppins_400Regular', 
+   fontWeight: 'bold',
     marginBottom: 20,
+    marginTop: 0,
   },
   input: {
-    width:'80%',
+    width: 300,
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#391A09',
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
   },
   button: {
-    width: '80%',
-    height: 50,
-    backgroundColor: '#007bff',
+    width: 100,
+    height: 40,
+    backgroundColor: '#391A09',
+    color:'#fff',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
@@ -105,8 +129,12 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   picker: {
-    width: '80%',
+    width: 300,
     height: 50,
+    borderColor: '#391A09',
+    backgroundColor: '#FAF4F0',
+
+    borderRadius: 5,
     marginBottom: 15,
   },
 });
