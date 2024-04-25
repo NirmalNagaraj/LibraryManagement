@@ -71,6 +71,8 @@ const StudentDashboard = () => { // Pass navigation as props
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.mainContent}>
+          {!selectedAction &&<BorrowBooks onAddForm={handleBorrowForm} />
+}
           {selectedAction === 'books' && <BorrowBooks onAddForm={handleBorrowForm} />}
           {selectedAction === 'dues' && <Dues />}
         </View>
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
   },
   sidebar: {
     width: 200,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#FAF4F0',
     position: 'absolute',
     top: 0,
     bottom: 0,

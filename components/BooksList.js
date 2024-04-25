@@ -5,7 +5,7 @@ import baseURL from '../auth/connection';
 
 const BooksList = () => {
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);noooo
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +26,11 @@ const BooksList = () => {
     };
   }, []);
 
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Books List</Text>
@@ -42,7 +47,7 @@ const BooksList = () => {
             {books.map((book) => (
               <View key={book.BookID} style={styles.tableRow}>
                 <Text style={[styles.cell, styles.cellWidth33]}>{book.BookName}</Text>
-                <Text style={[styles.cell, styles.cellWidth33]}>{book.PublishedDate}</Text>
+                <Text style={[styles.cell, styles.cellWidth33]}>{formatDate(book.PublishedDate)}</Text>
                 <Text style={[styles.cell, styles.cellWidth33]}>{book.Department}</Text>
               </View>
             ))}

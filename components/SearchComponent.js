@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import axios from 'axios';
-import {Picker} from'@react-native-picker/picker'
+import { Picker } from '@react-native-picker/picker'
 import baseURL from '../auth/connection';
 
 
@@ -41,8 +41,8 @@ const SearchComponent = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.searchContainer}>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Search..."
@@ -67,37 +67,41 @@ const SearchComponent = () => {
         renderItem={({ item }) => renderCard(item)}
         keyExtractor={(item, index) => index.toString()}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    flexGrow: 1,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  inputContainer: {
+    flexDirection: 'column',
     marginBottom: 20,
+   
   },
   input: {
     flex: 1,
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
+    
     marginRight: 10,
     paddingHorizontal: 10,
   },
   filterPicker: {
-    width: 120,
-    height: 40,
+    width: 200,
+    height: 10,
+    
   },
   searchButton: {
-    backgroundColor: 'blue',
+    backgroundColor: '#391A09',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 5,
+    width:100
   },
   searchButtonText: {
     color: 'white',
@@ -105,6 +109,8 @@ const styles = StyleSheet.create({
   resultText: {
     fontSize: 16,
     marginBottom: 10,
+    marginTop: 60,
+
   },
   card: {
     borderWidth: 1,

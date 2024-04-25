@@ -72,6 +72,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#FAF4F0', // Background color
+    color: '#391A09',
+
+
   },
   title: {
     fontSize: 24,
@@ -92,7 +96,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#391A09',
+
     padding: 10,
     borderRadius: 5,
     marginTop: 10,

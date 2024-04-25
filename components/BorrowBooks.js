@@ -38,55 +38,75 @@ const BorrowBooks = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.addButton} onPress={handleBorrowButton}>
-        <Text style={styles.buttonText}>Borrow Book</Text>
-      </TouchableOpacity>
-
-      <Modal visible={borrowModalVisible} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
-            <Ionicons name="close" size={24} color="black" />
-          </TouchableOpacity>
-          <BorrowForm onSubmit={() => handleCloseModal()} />
-        </View>
-      </Modal>
-
-      {borrowList.length === 0 ? (
-        <View style={styles.centeredContainer}>
-          <Text style={styles.noBooksText}>No books to display</Text>
-        </View>
-      ) : (
-        borrowList.map((item, index) => (
-          <View key={index} style={styles.cardContainer}>
-            <View style={styles.card}>
-              <Text style={styles.bookNameText}>{item.BookName}</Text>
-              <Text style={styles.validityText}>Bought on {formatDate(item.FromDate)}</Text>
-            </View>
+    <View style={styles.pageContainer}>
+      <View style={styles.header}>
+        <Text style={styles.dashboardText}>Dashboard</Text>
+        <TouchableOpacity style={styles.addButton} onPress={handleBorrowButton}>
+          <Text style={styles.buttonText}>Borrow</Text>
+        </TouchableOpacity>
+      </View>
+      
+      <View style={styles.container}>
+        <Modal visible={borrowModalVisible} transparent={true} animationType="slide">
+          <View style={styles.modalContainer}>
+            <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
+              <Ionicons name="close" size={24} color="black" />
+            </TouchableOpacity>
+            <BorrowForm onSubmit={() => handleCloseModal()} />
           </View>
-        ))
-      )}
+        </Modal>
+
+        {borrowList.length === 0 ? (
+          <View style={styles.centeredContainer}>
+            <Text style={styles.noBooksText}>No books to display</Text>
+          </View>
+        ) : (
+          borrowList.map((item, index) => (
+            <View key={index} style={styles.cardContainer}>
+              <View style={styles.card}>
+                <Text style={styles.bookNameText}>{item.BookName}</Text>
+                <Text style={styles.validityText}>Bought on {formatDate(item.FromDate)}</Text>
+              </View>
+            </View>
+          ))
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  pageContainer: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#FAF4F0',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  dashboardText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#391A09',
+    paddingRight:140,
   },
   addButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#391A09',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
-    marginBottom: 20, // Added margin bottom to provide space below the button
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
+  },
+  container: {
+    flex: 1,
+    padding: 20,
   },
   modalContainer: {
     flex: 1,
@@ -111,10 +131,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#391A09',
   },
   cardContainer: {
     marginVertical: 10,
-    width: '100%',
   },
   card: {
     backgroundColor: '#fff',
@@ -122,15 +142,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 20,
-    width: '100%',
   },
   bookNameText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#391A09',
   },
   validityText: {
     fontSize: 16,
+    color: '#391A09',
   },
 });
 

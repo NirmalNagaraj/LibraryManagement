@@ -17,13 +17,13 @@ const AddForm = ({ onSubmit }) => {
     try {
       const formattedDate = date.toISOString().split('T')[0];
       const response = await axios.post(`${baseURL}/api/addBook`, {
-        BookName: bookName,
-        BookAuthor: bookAuthor,
-        PublishedDate: formattedDate,
-        BookDescription: bookDescription,
-        Department: selectedDepartment,
-        ShelfNumber: shelfNumber,
-        Count: count,
+        bookName,
+        bookAuthor,
+        formattedDate,
+        bookDescription,
+        selectedDepartment,
+        shelfNumber,
+        count,
       });
       console.log('Response:', response.data);
 
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor: '#391A09',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,

@@ -91,11 +91,14 @@ const styles = StyleSheet.create({
     width: '80%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FAF4F0', // Background color
     padding: 20,
     borderRadius: 10,
+    color: '#391A09',
+
   },
   title: {
+    color: '#391A09',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     height: 50,
-    backgroundColor: '#007bff',
+    backgroundColor:'#391A09',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,

@@ -43,6 +43,7 @@ const Requests = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Requests</Text>
       {requests.map((request, index) => (
         <View key={index} style={styles.card}>
           <Text style={styles.text}>Register Number: {request.RegisterNumber}</Text>
@@ -66,6 +67,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 20,
+    backgroundColor: '#FAF4F0', // Background color
+    color: '#391A09',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    paddingLeft:10,
+    paddingRight:190,
   },
   card: {
     backgroundColor: '#fff',
@@ -81,11 +91,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#007bff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: 'center',
+    backgroundColor: '#391A09',
   },
   buttonText: {
     fontSize: 16,

@@ -61,11 +61,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: '#FAF4F0', // Background color
+    color: '#391A09',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 20,
+    paddingLeft:10,
+    paddingRight:190,
   },
   card: {
     backgroundColor: '#fff',
@@ -85,11 +89,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   notifyButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#391A09',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: 'center',
+
   },
   buttonText: {
     fontSize: 18,

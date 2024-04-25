@@ -22,7 +22,8 @@ CREATE TABLE UserProfile (
     Section VARCHAR(10) NOT NULL,
     Email VARCHAR(255) NOT NULL
 );
-
+INSERT INTO User_details (Name, RegisterNumber, Password) VALUES
+('Admin', '1001', '1234');
 INSERT INTO studentdetails (Name, RegisterNumber, Password) VALUES
 ('John Doe', '1001', '1234'),
 ('Jane Smith', '1002', '1234'),
@@ -40,9 +41,10 @@ CREATE TABLE BorrowList (
     RegisterNumber VARCHAR(255) NOT NULL,
     FromDate DATE NOT NULL,
     ToDate DATE NOT NULL,
-    BookName VARCHAR(255) NOT NULL
+    BookName VARCHAR(255) NOT NULL,
+	extend int(10) default 0 
 );
-
+select * from USer_details;
 -- Create the Books table
 CREATE TABLE Books (
     BookID VARCHAR(10) PRIMARY KEY,
@@ -81,3 +83,4 @@ CREATE TABLE sessionData (
     id INT AUTO_INCREMENT PRIMARY KEY,
     registerNumber VARCHAR(50) NOT NULL
 );
+select * from sessionData;

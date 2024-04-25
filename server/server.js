@@ -27,7 +27,7 @@ connection.connect((err) => {
   }
   console.log('Connected to MySQL database');
 });
-
+ 
 
 
 // Middleware to verify JWT
@@ -82,11 +82,23 @@ app.post('/api/studentLogin', (req, res) => {
 
 
 app.post('/api/addBook', (req, res) => {
-    const { bookName, bookAuthor, date, bookDescription, department, shelfNumber, count } = req.body;
+    const { bookName,
+        bookAuthor,
+        formattedDate,
+        bookDescription,
+        selectedDepartment,
+        shelfNumber,
+        count } = req.body;
 
     const query = 'INSERT INTO Books (BookName, BookAuthor, PublishedDate, BookDescription, Department, ShelfNumber, Count) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
-    connection.query(query, [bookName, bookAuthor, date, bookDescription, department, shelfNumber, count], (error, results) => {
+    connection.query(query, [bookName,
+        bookAuthor,
+        formattedDate,
+        bookDescription,
+        selectedDepartment,
+        shelfNumber,
+        count], (error, results) => {
         if (error) {
             console.error('Error inserting book details:', error);
             res.status(500).json({ success: false, message: 'Failed to insert book details' });
@@ -112,7 +124,7 @@ app.post('/api/adminLogin', (req, res) => {
     } else {
       res.status(401).json({ success: false, message: 'Invalid register number or password' });
     }
-  });
+  }); 
 });
 
 
@@ -278,7 +290,7 @@ app.get('/api/getborrowList', (req, res) => {
         console.error('Error fetching borrow list:', getBorrowListError);
         res.status(500).json({ error: 'Internal server error' });
         return;
-      }
+      }  
 
       // Send borrow list data as response
       res.status(200).json(borrowListResults);
