@@ -10,7 +10,7 @@ const ProfileSetup = () => {
 
   const handleSetupClick = () => {
     setShowUserProfile(true);
-  };
+  }; 
 
   let [fontsLoaded] = useFonts({
     Poppins_400Regular,

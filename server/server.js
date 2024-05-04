@@ -42,7 +42,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       return res.status(403).json({ error: 'Invalid token' });
     }
-    req.user = decoded;
+    req.user = decoded; 
     next();
   });
 };
@@ -82,10 +82,10 @@ app.post('/api/studentLogin', (req, res) => {
 
 
 app.post('/api/addBook', (req, res) => {
-    const { bookName,
+    const { bookName,  
         bookAuthor,
         formattedDate,
-        bookDescription,
+        bookDescription, 
         selectedDepartment,
         shelfNumber,
         count } = req.body;
@@ -390,9 +390,9 @@ app.get('/api/checkUser', (req, res) => {
       } else {
         res.status(200).json({ setupComplete: false });
       }
-    });
+    }); 
   });
-});
+}); 
 
 app.post('/api/addProfile', (req, res) => {
   const { name, department, year, section ,email} = req.body;

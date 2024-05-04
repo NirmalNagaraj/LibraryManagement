@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  title: {
+  title: { 
     fontSize: windowWidth < 600 ? 24 : 32,
     fontWeight: 'bold',
     marginBottom: 20,

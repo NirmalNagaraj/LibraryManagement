@@ -47,7 +47,7 @@ const Dues = () => {
     } catch (error) {
       console.error('Error extending due date:', error);
     }
-  };
+  }; 
 
   return (
     <View style={styles.container}>

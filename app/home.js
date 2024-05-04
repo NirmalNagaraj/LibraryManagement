@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAF4F0', // Background color
   },
   caption: {
-    color: '#391A09',
+    color: '#391A09', 
     fontSize: 20,
     fontFamily: 'Poppins_400Regular', 
     paddingTop:50,

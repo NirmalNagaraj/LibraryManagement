@@ -8,7 +8,7 @@ import DashboardWrapper from '../components/DashboardWrapper';
 import StudentDashboard from './studentdashboard';
 
 const Stack = createStackNavigator();
-
+ 
 const Index = () => {
   return (
     <Stack.Navigator>

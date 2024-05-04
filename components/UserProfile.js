@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useFonts, Poppins_400Regular, Poppins_700Bold } from '@expo-google-fonts/poppins'; // Import Poppins font
 
 import baseURL from '../auth/connection'; // Import baseURL from connection file
-
+ 
 const UserProfile = ({ onSubmitSuccess }) => {
   const [name, setName] = useState('');
   const [department, setDepartment] = useState('');

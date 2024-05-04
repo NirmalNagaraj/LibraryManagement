@@ -12,7 +12,7 @@ const AddForm = ({ onSubmit }) => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [shelfNumber, setShelfNumber] = useState('');
   const [count, setCount] = useState('');
-
+ 
   const handleSubmit = async () => {
     try {
       const formattedDate = date.toISOString().split('T')[0];

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     backgroundColor: '#FAF4F0', // Background color
     color: '#391A09',
-  },
+  }, 
   title: {
     fontSize: 24,
     fontWeight: 'bold',

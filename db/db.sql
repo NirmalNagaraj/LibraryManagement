@@ -13,7 +13,7 @@ CREATE TABLE studentdetails (
     RegisterNumber VARCHAR(50) UNIQUE NOT NULL,
     Password VARCHAR(255) NOT NULL -- Assuming a VARCHAR(255) field for password storage
 );
-CREATE TABLE UserProfile (
+CREATE TABLE UserProfile ( 
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     RegisterNumber VARCHAR(20) UNIQUE NOT NULL,
     Name VARCHAR(255) NOT NULL,

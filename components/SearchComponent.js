@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   filterPicker: {
     width: 200,
     height: 10,
-    
+     
   },
   searchButton: {
     backgroundColor: '#391A09',

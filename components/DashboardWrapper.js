@@ -13,7 +13,7 @@ const DashboardWrapper = () => {
       .then(response => {
         setSetupComplete(response.data.setupComplete);
       })
-      .catch(error => {
+      .catch(error => { 
         console.error('Error checking user setup:', error);
       });
   }, []);

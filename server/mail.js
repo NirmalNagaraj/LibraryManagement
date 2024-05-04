@@ -14,7 +14,7 @@ const sendEmail = async (to, subject, text) => {
       auth: {
         user: "bidblogger19@gmail.com", // Use environment variable for email address
         pass: "kgsqquqjagdvypje", // Use environment variable for email password
-      },
+      }, 
       tls: {
         rejectUnauthorized: false // Allow insecure TLS connections
       }

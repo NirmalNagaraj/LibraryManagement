@@ -44,7 +44,7 @@ const Login = () => {
         } else if (userType === 'admin') {
           navigation.navigate('Dashboard'); // Navigate to AdminDashboard if userType is admin
         }
-      } else {
+      } else { 
         console.log('Login failed:', response.data.message);
       }
     } catch (error) {

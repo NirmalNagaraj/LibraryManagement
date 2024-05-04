@@ -9,7 +9,7 @@ const DeleteComponent = () => {
 
   const handleSubmit = async () => {
     try {
-      
+       
       const response = await axios.post(`${baseURL}/api/deleteBooks`, {
         name,
       });
